@@ -13,7 +13,7 @@ import Login from "Components/Login/Login";
 import Register from "Components/Register/register";
 import Header from "Components/Header/Header";
 import Certification from "./Components/MyCertification/CertificationPage";
-
+import ReportPage from "Components/MyPage/ReportPage";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<NotFound />} />
-          
+
           <Route path="/traffic" element={<Traffic />} />
           <Route path="/group" element={<Group />} />
           <Route path="/groupjoin" element={<GroupJoin />} />
@@ -34,9 +34,7 @@ function App() {
           <Route path="/main" element={<Main />} />
           <Route path="/trafficsol" element={<TrafficSolution />} />
           <Route path="/mycertification" element={<Certification />} />
-
-
-          
+          <Route path="/reportpage" element={<ReportPage />} />
         </Routes>
       </BrowserRouter>
     </div>

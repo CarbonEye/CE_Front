@@ -115,39 +115,61 @@ function Certification() {
   const [inputs, setInputs] = useState({
     DateInput: "",
   });
-
-const API_ENDPOINT = '/user_auth';
-
-const submitData = async () => {
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'access_token': 'your_access_token',
-        'refresh_token': 'your_refresh_token',
-      },
-      body: JSON.stringify({
-        user_name: 'your_username',
-        img: 'your_image',
-      }),
-    });
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-
-
-  const [boxes, setBoxes] = useState([]); 
-
+  const [boxes, setBoxes] = useState([]);
   const [count, setCount] = useState(1);
+  const [uploadText, setUploadText] = useState("select your photo");
+  const API_ENDPOINT =
+    "https://vscode-jyyiu.run.goorm.site/proxy/8000/user_auth";
 
-  const handleAddBox = () => {
-    setBoxes([...boxes, ""]);
-    setCount(count + 1);
+  const submitData = async () => {
+    try {
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          //"Content-Type": "application/json",
+          access_token: "access token",
+          refresh_token: "refresh token",
+        },
+        body: JSON.stringify({
+          user_name: inputs.user_name,
+          img: inputs.img,
+        }),
+      });
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const selectImage = () => {
+    return new Promise((resolve) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = () => {
+        const file = input.files[0];
+        resolve(file);
+      };
+      input.click();
+    });
+  };
+
+  const handleAddBox = async () => {
+    const file = await selectImage();
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      const imageSrc = reader.result || null;
+      setBoxes([...boxes, imageSrc]);
+      setInputs({
+        ...inputs,
+        img: imageSrc,
+      });
+    };
   };
 
   const onChange = ({ target }) => {
@@ -158,24 +180,25 @@ const submitData = async () => {
     });
   };
 
-  const [uploadText, setUploadText] = useState("select your photo");
-
-  const onUpload = (e) => {
+  const onUpload = async (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
     return new Promise((resolve) => {
       reader.onload = () => {
-        const imageSrc = reader.result || null; // 이미지 소스 가져오기
-        setUploadText(""); //사진 업로드 하면 글자 없어짐
-        setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // 업로드된 이미지를 배열로 가져오기
+        const imageSrc = reader.result || null;
+        setUploadText("");
+        setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]);
+        setInputs({
+          ...inputs,
+          img: imageSrc,
+        });
         resolve();
       };
     });
   };
-  //
-  //
+
   const getDate = () => {
     let now = new Date(); // 현재 날짜 및 시간
     let todayDate = now.getDate();
@@ -183,7 +206,21 @@ const submitData = async () => {
 
     return curMonth + ", " + todayDate;
   };
-  //
+
+  // const onUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+
+  //   return new Promise((resolve) => {
+  //     reader.onload = () => {
+  //       const imageSrc = reader.result || null; // 이미지 소스 가져오기
+  //       setUploadText(""); //사진 업로드 하면 글자 없어짐
+  //       setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // 업로드된 이미지를 배열로 가져오기
+  //       resolve();
+  //     };
+  //   });
+  // };
 
   return (
     <MainWrapper>
@@ -222,5 +259,5 @@ const submitData = async () => {
     </MainWrapper>
   );
 }
-
+//
 export default Certification;

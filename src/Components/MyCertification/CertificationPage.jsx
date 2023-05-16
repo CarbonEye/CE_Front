@@ -5,6 +5,7 @@ import React from "react";
 import { months } from "utils/months";
 import styled from "styled-components";
 import "./CertificationPage.scss";
+import axios from "axios"; //
 
 const MainWrapper = styled.div`
   display: flex;
@@ -120,7 +121,30 @@ function Certification() {
 
   const [count, setCount] = useState(1);
 
-  const handleAddBox = () => {
+  const handleAddBox = async () => {
+    const endpoint = "/user_auth";
+    const method = "POST";
+    const headers = {
+      access_token: "your_access_token",
+      refresh_token: "your_refresh_token",
+    };
+    const body = {
+      user_name: "your_user_name",
+      img: "your_image_url",
+    };
+
+    try {
+      const response = await axios({
+        method,
+        url: endpoint,
+        headers,
+        data: body,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+
     setBoxes([...boxes, ""]);
     setCount(count + 1);
   };

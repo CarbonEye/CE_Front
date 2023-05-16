@@ -5,7 +5,6 @@ import React from "react";
 import { months } from "utils/months";
 import styled from "styled-components";
 import "./CertificationPage.scss";
-import axios from "axios"; //
 
 const MainWrapper = styled.div`
   display: flex;
@@ -117,34 +116,36 @@ function Certification() {
     DateInput: "",
   });
 
-  const [boxes, setBoxes] = useState([]); // new state variable to store the array of uploaded images
+const API_ENDPOINT = '/user_auth';
+
+const submitData = async () => {
+  try {
+    const response = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': 'your_access_token',
+        'refresh_token': 'your_refresh_token',
+      },
+      body: JSON.stringify({
+        user_name: 'your_username',
+        img: 'your_image',
+      }),
+    });
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+  const [boxes, setBoxes] = useState([]); 
 
   const [count, setCount] = useState(1);
 
-  const handleAddBox = async () => {
-    const endpoint = "/user_auth";
-    const method = "POST";
-    const headers = {
-      access_token: "your_access_token",
-      refresh_token: "your_refresh_token",
-    };
-    const body = {
-      user_name: "your_user_name",
-      img: "your_image_url",
-    };
-
-    try {
-      const response = await axios({
-        method,
-        url: endpoint,
-        headers,
-        data: body,
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-
+  const handleAddBox = () => {
     setBoxes([...boxes, ""]);
     setCount(count + 1);
   };
@@ -166,9 +167,9 @@ function Certification() {
 
     return new Promise((resolve) => {
       reader.onload = () => {
-        const imageSrc = reader.result || null; // get the image source
+        const imageSrc = reader.result || null; // 이미지 소스 가져오기
         setUploadText(""); //사진 업로드 하면 글자 없어짐
-        setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // add the uploaded image to the array of uploaded images
+        setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // 업로드된 이미지를 배열로 가져오기
         resolve();
       };
     });

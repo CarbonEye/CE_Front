@@ -1,7 +1,5 @@
 import { useState } from "react";
-
 import React from "react";
-
 import { months } from "utils/months";
 import styled from "styled-components";
 import "./CertificationPage.scss";
@@ -94,7 +92,6 @@ const AddBtn = styled.div`
   text-align: center;
 `;
 
-//For 사진 업로드
 const ImgContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -200,27 +197,12 @@ function Certification() {
   };
 
   const getDate = () => {
-    let now = new Date(); // 현재 날짜 및 시간
+    let now = new Date();
     let todayDate = now.getDate();
     const curMonth = months[now.getMonth()].name;
 
     return curMonth + ", " + todayDate;
   };
-
-  // const onUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(file);
-
-  //   return new Promise((resolve) => {
-  //     reader.onload = () => {
-  //       const imageSrc = reader.result || null; // 이미지 소스 가져오기
-  //       setUploadText(""); //사진 업로드 하면 글자 없어짐
-  //       setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // 업로드된 이미지를 배열로 가져오기
-  //       resolve();
-  //     };
-  //   });
-  // };
 
   return (
     <MainWrapper>

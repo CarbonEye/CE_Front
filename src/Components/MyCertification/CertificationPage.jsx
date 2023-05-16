@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useCallback, useRef } from "react";
+
 import React from "react";
-import axios from "axios";
+
 import { months } from "utils/months";
 import styled from "styled-components";
 import "./CertificationPage.scss";
@@ -19,19 +19,11 @@ const TopText = styled.div`
   margin-top: 4vh;
 `;
 
-const DateBox = styled.input`
-  padding-left: 6vh;
-  padding-right: 3vh;
-  border: none;
-  background-color: transparent;
-  font-size: 1.2vh;
-`;
 const TodayDate = styled.div`
   padding-left: 6vh;
   padding-right: 3vh;
   font-size: 1.2vh;
 `;
-//
 
 const GreyLine = styled.div`
   border-bottom: 0.3lvh solid #061941;
@@ -79,14 +71,7 @@ const NameTableCell = styled.div`
   font-size: 1vh;
   justify-content: center;
   align-items: center;
-  padding-right: 4vh;
-`;
-
-const InputTableCell = styled.div`
-  padding-left: 4vh;
-  font-size: 1vh;
-  justify-content: center;
-  align-items: center;
+  margin-right: 16vw;
 `;
 
 const DateTableCell = styled.div`
@@ -123,7 +108,7 @@ const ImgInput = styled.input`
 `;
 
 const Image = styled.img`
-  width: 2.5vh;
+  width: 3.5vh;
 `;
 
 function Certification() {
@@ -131,9 +116,12 @@ function Certification() {
     DateInput: "",
   });
 
+  const [boxes, setBoxes] = useState([]); // new state variable to store the array of uploaded images
+
   const [count, setCount] = useState(1);
 
   const handleAddBox = () => {
+    setBoxes([...boxes, ""]);
     setCount(count + 1);
   };
 
@@ -145,9 +133,7 @@ function Certification() {
     });
   };
 
-  //For 사진 업로드
-  const [imageSrc, setImageSrc] = useState(null);
-  const [uploadText, setUploadText] = useState("사진 선택");
+  const [uploadText, setUploadText] = useState("select your photo");
 
   const onUpload = (e) => {
     const file = e.target.files[0];
@@ -156,8 +142,9 @@ function Certification() {
 
     return new Promise((resolve) => {
       reader.onload = () => {
-        setImageSrc(reader.result || null); // 파일의 컨텐츠
+        const imageSrc = reader.result || null; // get the image source
         setUploadText(""); //사진 업로드 하면 글자 없어짐
+        setBoxes([...boxes.slice(0, boxes.length - 1), imageSrc]); // add the uploaded image to the array of uploaded images
         resolve();
       };
     });
@@ -182,25 +169,28 @@ function Certification() {
         <TableCell>인증 사진</TableCell>
         <TableCell>날짜</TableCell>
       </TableWrapper>
-      {[...Array(count)].map((_, index) => (
-        <GreyWrapper>
+
+      {boxes.map((imageSrc, index) => (
+        <GreyWrapper key={index}>
           <NameTableCell>Name{/* 여기에 이름 들어감 */}</NameTableCell>
-
           <ImgContainer>
-            <label htmlFor="upload-image">
-              <ImgInput
-                accept="image/*"
-                id="upload-image"
-                multiple
-                type="file"
-                onChange={onUpload}
-              />
-              {uploadText}
-            </label>
-            {imageSrc && <Image src={imageSrc} />}
+            {imageSrc ? (
+              <Image src={imageSrc} alt="uploaded" />
+            ) : (
+              <label htmlFor={`img-upload-${index}`}>
+                {uploadText || "사진 선택"}
+              </label>
+            )}
+            <ImgInput
+              id={`img-upload-${index}`}
+              type="file"
+              accept="image/*"
+              onChange={onUpload}
+            />
           </ImgContainer>
-
-          <TodayDate>{getDate()}</TodayDate>
+          <DateTableCell>
+            <TodayDate>{getDate()}</TodayDate>
+          </DateTableCell>
         </GreyWrapper>
       ))}
       <AddBtn onClick={handleAddBox}>+</AddBtn>
